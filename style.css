@@ -1,0 +1,14 @@
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+h1, h2, h3, h4 {
+    margin: 0px;
+    text-align: center;
+}
+
+.dot {
+    stroke: black;
+}
