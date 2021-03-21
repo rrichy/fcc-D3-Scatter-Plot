@@ -1,5 +1,3 @@
-// import * as d3 from "d3";
-
 const [W, H, PADDING] = [700, 450, 60];
 
 function main() {
@@ -74,13 +72,35 @@ function main() {
                 .attr('cy', d => yScale(d.Time))
                 .attr('r', 5)
                 .attr('data-xvalue', d => d.Year)
-                .attr('data-yvalue', d => d.Time.getMinutes() + ':' + d.Time.getSeconds())
+                .attr('data-yvalue', d => d.Time)
                 .attr('fill', d => color(d.Doping !== ''))
             
             // legend
-            // svg.
-            console.log(color.domain())
+            const legendContainer = svg.append('g').attr('g', 'legend');
+
+            const legend = legendContainer.selectAll('#legend')
+                .data(color.domain())
+                .enter()
+                .append('g')
+                .attr('class', 'legend-label')
+                .attr('transform', (d, i) => 'translate(0,' + (H / 2 - 100 - i * 20) + ')');
+
+            legend.append('rect')
+                .attr('x', W - 18)
+                .attr('width', 18)
+                .attr('height', 18)
+                .style('fill', color);
+
+            legend.append('text')
+                .attr('x', W - 24)
+                .attr('y', 9)
+                .attr('dy', '.35em')
+                .style('text-anchor', 'end')
+                .text((d) => {
+                  if(d) return 'Riders with doping allegations';
+                  else return 'No doping allegations';
+                });
         })
 }
 
-document.addEventListener('DOMContentLoaded', main)
+document.addEventListener('DOMContentLoaded', main);
