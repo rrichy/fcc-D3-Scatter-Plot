@@ -19,7 +19,7 @@ function main() {
             const title = d3.select('body').append('div').attr('id', 'title')
                             // .style('background-color', 'gray')
                             .style('width', 'fit-content')
-                            .style('padding', '10px 30px 50px 30px')
+                            .style('padding', '10px 30px 10px 30px')
                             .style('margin', 'auto')
                             .style('box-shadow', '5px 2px 20px black');
 
@@ -62,8 +62,15 @@ function main() {
                 .attr('y', 15)
                 .text('Time in Minutes');
 
-            // data-points
             const color = d3.scaleOrdinal(d3.schemeTableau10 );
+
+            // tooltip
+            const tooltip = title.append('div')
+                                .attr('id', 'tooltip')
+                                .style('position', 'absolute')
+                                .style('opacity', 0)
+                                
+            // data-points
             svg.selectAll('circle')
                 .data(jsonData).enter()
                 .append('circle')
@@ -74,9 +81,28 @@ function main() {
                 .attr('data-xvalue', d => d.Year)
                 .attr('data-yvalue', d => d.Time)
                 .attr('fill', d => color(d.Doping !== ''))
-            
+                .attr('opacity', 0.7)
+                .on('mouseover', (e, d) => {
+                    tooltip.attr('data-year', d.Year)
+                        .style('left', (e.pageX+ 10) + 'px')
+                        .style('top', (e.pageY - 60) + 'px')
+                        .style('width', '220px')
+                        .html(
+                            d.Name + ', ' + d.Nationality + '<br>' +
+                            'Year: ' + d.Year + ', Time: ' + d.Time.getMinutes() + ':' + d.Time.getSeconds()
+                            + (d.Doping !== '' ? '<br><br>' + d.Doping : '')
+                        )
+                        .style('opacity', 0.85)
+                })
+                .on('mouseout', () => {
+                    tooltip
+                        .html('')
+                        .style('width', '0px')
+                        .style('opacity', 0);
+                })
+
             // legend
-            const legendContainer = svg.append('g').attr('g', 'legend');
+            const legendContainer = svg.append('g').attr('id', 'legend');
 
             const legend = legendContainer.selectAll('#legend')
                 .data(color.domain())
@@ -97,9 +123,10 @@ function main() {
                 .attr('dy', '.35em')
                 .style('text-anchor', 'end')
                 .text((d) => {
-                  if(d) return 'Riders with doping allegations';
-                  else return 'No doping allegations';
+                if(d) return 'Riders with doping allegations';
+                else return 'No doping allegations';
                 });
+                
         })
 }
 
